@@ -16,7 +16,6 @@ public class UpdateUserCredsTests {
     private UserSteps steps;
     private UserRegister userRegister;
     private String accessToken;
-    private String refreshToken;
     private Response response;
     private static final Faker faker = new Faker();
 
@@ -28,7 +27,6 @@ public class UpdateUserCredsTests {
         response = steps.registerUser(userRegister);
         steps.printResponseBody(response);
         accessToken = steps.extractAccessTokenFromResponse(response);
-        refreshToken = steps.extractRefreshTokenFromResponse(response);
     }
 
     @Test

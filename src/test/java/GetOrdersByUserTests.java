@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.http.HttpStatus.SC_OK;
-import static org.apache.http.HttpStatus.SC_UNAUTHORIZED;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GetOrdersByUserTests {

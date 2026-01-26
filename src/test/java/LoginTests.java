@@ -17,7 +17,6 @@ public class LoginTests {
     private UserSteps steps;
     private UserRegister userRegister;
     private String accessToken;
-    private String refreshToken;
     private Response response;
 
     @BeforeEach
@@ -27,7 +26,6 @@ public class LoginTests {
         response = steps.registerUser(userRegister);
         steps.printResponseBody(response);
         accessToken = steps.extractAccessTokenFromResponse(response);
-        refreshToken = steps.extractAccessTokenFromResponse(response);
     }
 
     @Test

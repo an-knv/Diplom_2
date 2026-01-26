@@ -13,7 +13,6 @@ public class UserSteps {
     private static final String API_REGISTER = "/api/auth/register";
     private static final String API_USER = "/api/auth/user";
     private static final String API_LOGIN = "api/auth/login";
-    private static final String API_LOGOUT = "api/auth/logout";
 
     public UserSteps() {
         RestAssured.baseURI = "https://stellarburgers.education-services.ru/";
@@ -58,16 +57,6 @@ public class UserSteps {
         return given()
                 .contentType(JSON)
                 .header("Authorization", accessToken)
-                .body(userRegister)
-                .when()
-                .post(API_LOGIN);
-    }
-    @Step("выход из системы пользователя")
-    public Response logoutUser(String refreshToken, UserRegister userRegister) {
-
-        return given()
-                .contentType(JSON)
-                .header("Authorization", refreshToken)
                 .body(userRegister)
                 .when()
                 .post(API_LOGIN);

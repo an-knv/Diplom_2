@@ -5,14 +5,12 @@ import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import model.OrderCreater;
-import model.UserRegister;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.http.ContentType.JSON;
 
 public class OrderSteps {
     private static final String CREATE_ORDER = "/api/orders";
