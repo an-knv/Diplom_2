@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.TestWatcher;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
+import static edu.praktikum.driver.WebDriverCreator.createWebDriver;
 import static java.time.Duration.ofSeconds;
 
 public class BrowserExtension implements BeforeEachCallback, AfterEachCallback, TestWatcher {
@@ -14,8 +15,9 @@ public class BrowserExtension implements BeforeEachCallback, AfterEachCallback, 
 
     @Override
     public void beforeEach(ExtensionContext context) {
-        webDriver = new ChromeDriver();
+        webDriver = createWebDriver();
         webDriver.manage().timeouts().implicitlyWait(ofSeconds(3));
+
     }
 
     @Override
