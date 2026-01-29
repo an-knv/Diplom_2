@@ -4,6 +4,7 @@ import com.github.javafaker.Faker;
 import generator.UserExample;
 import io.restassured.response.Response;
 import model.OrderCreater;
+import model.OrderResponseCreator;
 import model.UserRegister;
 import org.junit.jupiter.api.*;
 
@@ -43,9 +44,10 @@ public class CreateOrderTests {
         //проверяем ответ
         assertEquals(SC_OK, response.statusCode(),
                 "При успешном создании должен возвращаться код 200");
-        assertTrue(response.jsonPath().getBoolean("success"),
+        OrderResponseCreator ordRes = response.as(OrderResponseCreator.class);
+        assertTrue(ordRes.isSuccess(),
                 "ответ должен содержать success: true");
-        assertNotNull(response.jsonPath().get("order.number"),
+        assertNotNull(ordRes.getOrder().getNumber(),
                 "В ответе должен быть номер заказа");
 
     }
@@ -62,9 +64,10 @@ public class CreateOrderTests {
         //проверяем ответ
         assertEquals(SC_OK, response.statusCode(),
                 "При успешном создании должен возвращаться код 200");
-        assertTrue(response.jsonPath().getBoolean("success"),
+        OrderResponseCreator ordRes = response.as(OrderResponseCreator.class);
+        assertTrue(ordRes.isSuccess(),
                 "ответ должен содержать success: true");
-        assertNotNull(response.jsonPath().get("order.number"),
+        assertNotNull(ordRes.getOrder().getNumber(),
                 "В ответе должен быть номер заказа");
 
     }
@@ -79,10 +82,11 @@ public class CreateOrderTests {
         //проверяем ответ
         assertEquals(SC_BAD_REQUEST, response.statusCode(),
                 "должен возвращаться код 400");
-        assertFalse(response.jsonPath().getBoolean("success"),
+        OrderResponseCreator ordRes = response.as(OrderResponseCreator.class);
+        assertFalse(ordRes.isSuccess(),
                 "ответ должен содержать success: false");
-        assertEquals("Ingredient ids must be provided", response.jsonPath().getString("message") ,
-                "Сообщение должно быть 'Ingredient ids must be provided'");
+        assertEquals(ordRes.getMessage(),
+                "Ingredient ids must be provided","Сообщение должно быть 'Ingredient ids must be provided'");
 
     }
     @Test
@@ -95,10 +99,11 @@ public class CreateOrderTests {
         orderSteps.printResponseBody(response);
         assertEquals(SC_BAD_REQUEST, response.statusCode(),
                 "должен возвращаться код 400");
-        assertFalse(response.jsonPath().getBoolean("success"),
+        OrderResponseCreator ordRes = response.as(OrderResponseCreator.class);
+        assertFalse(ordRes.isSuccess(),
                 "ответ должен содержать success: false");
-        assertEquals("Ingredient ids must be provided", response.jsonPath().getString("message") ,
-                "Сообщение должно быть 'Ingredient ids must be provided'");
+        assertEquals(ordRes.getMessage(),
+                "Ingredient ids must be provided","Сообщение должно быть 'Ingredient ids must be provided'");
 
     }
     @Test
@@ -106,12 +111,7 @@ public class CreateOrderTests {
     public void createOrderWithAuthoutWrongIngredients() {
 
         Faker faker = new Faker();
-        ArrayList<String> ids = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            String md5 = faker.crypto().md5();
-            ids.add(md5.substring(0, 27));
-        }
-        OrderCreater orderCreater = new OrderCreater(ids);
+        OrderCreater orderCreater = new OrderCreater(List.of(faker.crypto().md5(),faker.crypto().md5()));
         Response response = orderSteps.CreateOrderWithoutAuth(orderCreater);
         orderSteps.printRequestBody(orderCreater);
         orderSteps.printResponseBody(response);
@@ -125,12 +125,7 @@ public class CreateOrderTests {
     public void createOrderWithAuthWrongIngredients() {
 
         Faker faker = new Faker();
-        ArrayList<String> ids = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            String md5 = faker.crypto().md5();
-            ids.add(md5.substring(0, 27));
-        }
-        OrderCreater orderCreater = new OrderCreater(ids);
+        OrderCreater orderCreater = new OrderCreater(List.of(faker.crypto().md5(),faker.crypto().md5()));
         Response response = orderSteps.CreateOrderWithAuth(accessToken, orderCreater);
         orderSteps.printRequestBody(orderCreater);
         orderSteps.printResponseBody(response);

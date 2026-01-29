@@ -3,6 +3,7 @@ package Steps;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import model.UserCreds;
 import model.UserRegister;
 
 import static io.restassured.RestAssured.given;
@@ -35,21 +36,15 @@ public class UserSteps {
     }
     @Step("Извлечь accessToken из ответа")
     public String extractAccessTokenFromResponse(Response response) {
-
-        return response.jsonPath().getString("accessToken");
-    }
-    @Step("Извлечь accessToken из ответа")
-    public String extractRefreshTokenFromResponse(Response response) {
-
-        return response.jsonPath().getString("refreshToken");
+        return response.as(UserCreds.class).getAccessToken();
     }
     @Step("Удаление пользователя")
     public Response deleteUser(String accessToken) {
         return given()
                 .contentType(JSON)
-                .header("Authorization", accessToken) // Bearer токен в заголовке
+                .header("Authorization", accessToken)
                 .when()
-                .delete(API_USER); // DELETE запрос на удаление пользователя
+                .delete(API_USER);
     }
     @Step("Авторизация пользователя")
     public Response loginUser(String accessToken, UserRegister userRegister) {

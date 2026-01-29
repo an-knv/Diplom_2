@@ -1,6 +1,7 @@
 import Steps.UserSteps;
 import generator.UserExample;
 import io.restassured.response.Response;
+import model.UserCreds;
 import model.UserRegister;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,7 @@ public class LoginTests {
     }
 
     @Test
-    @DisplayName("авторизация пользователя")
+    @DisplayName("успешная авторизация пользователя")
     public void loginUserTest() {
 
         steps.loginUser(accessToken, userRegister);
@@ -37,7 +38,8 @@ public class LoginTests {
         steps.printResponseBody(responseSecond);
         assertEquals(SC_OK, responseSecond.statusCode(),
                 "При успешном создании должен возвращаться код 200");
-        assertTrue(responseSecond.jsonPath().getBoolean("success"),
+        UserCreds creds = responseSecond.as(UserCreds.class);
+        assertTrue(creds.isSuccess(),
                 "ответ должен содержать success: true");
 
 
@@ -54,32 +56,36 @@ public class LoginTests {
         );
 
         steps.loginUser(accessToken, modifiedEmailUser);
-        Response responseSecond = steps.loginUser(accessToken, modifiedEmailUser);
-        steps.printResponseBody(responseSecond);
-        assertEquals(SC_UNAUTHORIZED, responseSecond.statusCode(),
-                "Должен возвращаться код 401");
-        steps.printResponseBody(responseSecond);
-        assertFalse(responseSecond.jsonPath().getBoolean("success"),
-                "ответ должен содержать success: false");
-        assertEquals("email or password are incorrect", responseSecond.jsonPath().getString("message") ,
-                "Сообщение должно быть 'email or password are incorrect'");
-        // Изменяем Password
-        String modifiedPassword = userRegister.getPassword() + "1";
-        UserRegister modifiedPasswordUser = new UserRegister(
-                userRegister.getEmail(),
-                modifiedPassword,
-                userRegister.getName()
-        );
-        steps.loginUser(accessToken, modifiedPasswordUser);
-        Response response3 = steps.loginUser(accessToken, modifiedPasswordUser);
-        steps.printResponseBody(response3);
-        assertEquals(SC_UNAUTHORIZED, response3.statusCode(),
-                "Должен возвращаться код 401");
-        steps.printResponseBody(responseSecond);
-        assertFalse(responseSecond.jsonPath().getBoolean("success"),
-                "ответ должен содержать success: false");
-        assertEquals("email or password are incorrect", responseSecond.jsonPath().getString("message") ,
-                "Сообщение должно быть 'email or password are incorrect'");
+        {
+            Response responseSecond = steps.loginUser(accessToken, modifiedEmailUser);
+            steps.printResponseBody(responseSecond);
+            assertEquals(SC_UNAUTHORIZED, responseSecond.statusCode(),
+                    "Должен возвращаться код 401");
+            steps.printResponseBody(responseSecond);
+            UserCreds creds = responseSecond.as(UserCreds.class);
+            assertFalse(creds.isSuccess(),
+                    "ответ должен содержать success: false");
+            assertEquals("email or password are incorrect", creds.getMessage(),
+                    "Сообщение должно быть 'email or password are incorrect'");
+        }
+        {// Изменяем Password
+            String modifiedPassword = userRegister.getPassword() + "1";
+            UserRegister modifiedPasswordUser = new UserRegister(
+                    userRegister.getEmail(),
+                    modifiedPassword,
+                    userRegister.getName()
+            );
+            steps.loginUser(accessToken, modifiedPasswordUser);
+            Response response3 = steps.loginUser(accessToken, modifiedPasswordUser);
+            steps.printResponseBody(response3);
+            assertEquals(SC_UNAUTHORIZED, response3.statusCode(),
+                    "Должен возвращаться код 401");
+            UserCreds creds = response3.as(UserCreds.class);
+            assertFalse(creds.isSuccess(),
+                    "ответ должен содержать success: false");
+            assertEquals("email or password are incorrect", creds.getMessage(),
+                    "Сообщение должно быть 'email or password are incorrect'");
+        }
 
     }
 

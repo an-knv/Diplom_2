@@ -1,6 +1,7 @@
 import Steps.UserSteps;
 import generator.UserExample;
 import io.restassured.response.Response;
+import model.UserCreds;
 import model.UserRegister;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,8 +33,9 @@ public class UserRegisterTests {
         //проверяем ответ
         assertEquals(SC_OK, response.statusCode(),
                 "При успешном создании должен возвращаться код 200");
+        UserCreds creds = response.as(UserCreds.class);
         steps.printResponseBody(response);
-        assertTrue(response.jsonPath().getBoolean("success"),
+        assertTrue(creds.isSuccess(),
                 "ответ должен содержать success: true");
         accessToken = steps.extractAccessTokenFromResponse(response);
         System.out.println("Access Token: " + accessToken);
@@ -49,17 +51,19 @@ public class UserRegisterTests {
         assertEquals(SC_OK, response.statusCode(),
                 "При успешном создании должен возвращаться код 200");
         steps.printResponseBody(response);
-        assertTrue(response.jsonPath().getBoolean("success"),
+        UserCreds creds = response.as(UserCreds.class);
+        assertTrue(creds.isSuccess(),
                 "ответ должен содержать success: true");
         accessToken = steps.extractAccessTokenFromResponse(response);
         // Регистрируем пользователя повторно
         Response responseSecond = steps.registerUser(userRegister);
         steps.printResponseBody(responseSecond);
+        UserCreds creds2 = responseSecond.as(UserCreds.class);
         assertEquals(SC_FORBIDDEN, responseSecond.statusCode(),
                 "При повторном создании должен возвращаться код 403");
-        assertFalse(responseSecond.jsonPath().getBoolean("success"),
+        assertFalse(creds2.isSuccess(),
                 "ответ должен содержать success: false");
-        assertEquals("User already exists", responseSecond.jsonPath().getString("message") ,
+        assertEquals("User already exists", creds2.getMessage(),
                 "Сообщение должно быть 'User already exists'");
 
     }
@@ -73,10 +77,11 @@ public class UserRegisterTests {
         assertEquals(SC_FORBIDDEN, response.statusCode(),
                 "При создании должен возвращаться код 403");
         steps.printResponseBody(response);
-        assertFalse(response.jsonPath().getBoolean("success"),
+        UserCreds creds = response.as(UserCreds.class);
+        assertFalse(creds.isSuccess(),
                 "ответ должен содержать success: false");
         accessToken = steps.extractAccessTokenFromResponse(response);
-        assertEquals("Email, password and name are required fields", response.jsonPath().getString("message"),
+        assertEquals("Email, password and name are required fields", creds.getMessage(),
                 "Сообщение должно быть 'Email, password and name are required fields'");
 
     }
@@ -90,10 +95,10 @@ public class UserRegisterTests {
         assertEquals(SC_FORBIDDEN, response.statusCode(),
                 "При создании должен возвращаться код 403");
         steps.printResponseBody(response);
-        assertFalse(response.jsonPath().getBoolean("success"),
+        UserCreds creds = response.as(UserCreds.class);
+        assertFalse(creds.isSuccess(),
                 "ответ должен содержать success: false");
-        accessToken = steps.extractAccessTokenFromResponse(response);
-        assertEquals("Email, password and name are required fields", response.jsonPath().getString("message"),
+        assertEquals("Email, password and name are required fields", creds.getMessage(),
                 "Сообщение должно быть 'Email, password and name are required fields'");
 
     }
@@ -108,10 +113,10 @@ public class UserRegisterTests {
         assertEquals(SC_FORBIDDEN, response.statusCode(),
                 "При создании должен возвращаться код 403");
         steps.printResponseBody(response);
-        assertFalse(response.jsonPath().getBoolean("success"),
+        UserCreds creds = response.as(UserCreds.class);
+        assertFalse(creds.isSuccess(),
                 "ответ должен содержать success: false");
-        accessToken = steps.extractAccessTokenFromResponse(response);
-        assertEquals("Email, password and name are required fields", response.jsonPath().getString("message"),
+        assertEquals("Email, password and name are required fields", creds.getMessage(),
                 "Сообщение должно быть 'Email, password and name are required fields'");
 
     }

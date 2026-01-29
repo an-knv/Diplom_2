@@ -2,6 +2,7 @@ import Steps.UserSteps;
 import com.github.javafaker.Faker;
 import generator.UserExample;
 import io.restassured.response.Response;
+import model.UserCreds;
 import model.UserRegister;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,18 +39,18 @@ public class UpdateUserCredsTests {
                 userRegister.getName());
         Response response1 = steps.updateUser(accessToken, updatedUser);
         steps.printResponseBody(response1);
+        UserCreds creds = response1.as(UserCreds.class);
         assertEquals(SC_OK, response1.statusCode(),
                 "должен возвращаться код 200");
-        assertTrue(response1.jsonPath().getBoolean("success"),
+        assertTrue(creds.isSuccess(),
                 "ответ должен содержать success: true");
-        assertNotNull(response1.jsonPath().get("user"),
+        assertNotNull(creds.getUser(),
                 "В ответе должно быть поле 'user'");
-        assertEquals(newEmail, response1.jsonPath().getString("user.email"),
+        assertEquals(newEmail, creds.getUser().getEmail(),
                 "Email в ответе должен совпадать с отправленным");
-        assertEquals(userRegister.getName(), response.jsonPath().getString("user.name"),
+        assertEquals(userRegister.getName(), creds.getUser().getName(),
                 "Имя в ответе должно остаться прежним");
-        String message = response1.jsonPath().getString("message");
-        assertNull(message, "При успешном обновлении не должно быть сообщения об ошибке");
+        assertNull(creds.getMessage(), "При успешном обновлении не должно быть сообщения об ошибке");
     }
     @Test
     @DisplayName("изменение Email пользователя без авторизации")
@@ -62,9 +63,10 @@ public class UpdateUserCredsTests {
         steps.printResponseBody(response1);
         assertEquals(SC_UNAUTHORIZED, response1.statusCode(),
                 "должен возвращаться код 401");
-        assertFalse(response1.jsonPath().getBoolean("success"),
+        UserCreds creds = response1.as(UserCreds.class);
+        assertFalse(creds.isSuccess(),
                 "ответ должен содержать success: false");
-        assertEquals("You should be authorised", response1.jsonPath().getString("message"),
+        assertEquals("You should be authorised", creds.getMessage(),
                 "Сообщение должно быть 'You should be authorised'");
     }
     @Test
@@ -78,14 +80,14 @@ public class UpdateUserCredsTests {
         steps.printResponseBody(response1);
         assertEquals(SC_OK, response1.statusCode(),
                 "должен возвращаться код 200");
-        assertTrue(response1.jsonPath().getBoolean("success"),
+        UserCreds creds = response1.as(UserCreds.class);
+        assertTrue(creds.isSuccess(),
                 "ответ должен содержать success: true");
-        assertNotNull(response1.jsonPath().get("user"),
+        assertNotNull(creds.getUser(),
                 "В ответе должно быть поле 'user'");
-        assertEquals(userRegister.getName(), response.jsonPath().getString("user.name"),
+        assertEquals(userRegister.getName(), creds.getUser().getName(),
                 "Имя в ответе должно остаться прежним");
-        String message = response1.jsonPath().getString("message");
-        assertNull(message, "При успешном обновлении не должно быть сообщения об ошибке");
+        assertNull(creds.getMessage(), "При успешном обновлении не должно быть сообщения об ошибке");
 
     }
     @Test
@@ -98,9 +100,10 @@ public class UpdateUserCredsTests {
         steps.printResponseBody(response2);
         assertEquals(SC_UNAUTHORIZED, response2.statusCode(),
                 "должен возвращаться код 401");
-        assertFalse(response2.jsonPath().getBoolean("success"),
+        UserCreds creds = response2.as(UserCreds.class);
+        assertFalse(creds.isSuccess(),
                 "ответ должен содержать success: false");
-        assertEquals("You should be authorised", response2.jsonPath().getString("message"),
+        assertEquals("You should be authorised", creds.getMessage(),
                 "Сообщение должно быть 'You should be authorised'");
     }
     @Test
@@ -114,16 +117,16 @@ public class UpdateUserCredsTests {
         steps.printResponseBody(response3);
         assertEquals(SC_OK, response3.statusCode(),
                 "должен возвращаться код 200");
-        assertTrue(response3.jsonPath().getBoolean("success"),
+        UserCreds creds = response3.as(UserCreds.class);
+        assertTrue(creds.isSuccess(),
                 "ответ должен содержать success: true");
-        assertNotNull(response3.jsonPath().get("user"),
+        assertNotNull(creds.getUser(),
                 "В ответе должно быть поле 'user'");
-        assertEquals(userRegister.getEmail(), response3.jsonPath().getString("user.email"),
+        assertEquals(userRegister.getEmail(), creds.getUser().getEmail(),
                 "Email в ответе должен совпадать с отправленным");
-        assertEquals(newName, response3.jsonPath().getString("user.name"),
+        assertEquals(newName, creds.getUser().getName(),
                 "Имя в ответе должно остаться прежним");
-        String message = response3.jsonPath().getString("message");
-        assertNull(message, "При успешном обновлении не должно быть сообщения об ошибке");
+        assertNull(creds.getMessage(), "При успешном обновлении не должно быть сообщения об ошибке");
     }
 
     @Test
@@ -136,9 +139,10 @@ public class UpdateUserCredsTests {
         steps.printResponseBody(response3);
         assertEquals(SC_UNAUTHORIZED, response3.statusCode(),
                 "должен возвращаться код 401");
-        assertFalse(response3.jsonPath().getBoolean("success"),
+        UserCreds creds = response3.as(UserCreds.class);
+        assertFalse(creds.isSuccess(),
                 "ответ должен содержать success: false");
-        assertEquals("You should be authorised", response3.jsonPath().getString("message"),
+        assertEquals("You should be authorised", creds.getMessage(),
                 "Сообщение должно быть 'You should be authorised'");
     }
 

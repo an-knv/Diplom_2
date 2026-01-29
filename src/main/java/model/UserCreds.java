@@ -22,14 +22,5 @@ public class UserCreds {
         private String email;
         private String name;
     }
-    public static UserCreds fromUserRegisterTrue(UserRegister userRegister,
-                                             String accessToken,
-                                             String refreshToken) {
-        User user = new User(userRegister.getEmail(), userRegister.getName());
-        return new UserCreds(true, user, accessToken, refreshToken,null);
-    }
-    public static UserCreds fromUserRegisterFalse(UserRegister userRegister, String errorMessage) {
-        User user = new User(userRegister.getEmail(), userRegister.getName());
-        return new UserCreds(false, null, null, null, errorMessage);
-    }
+
 }

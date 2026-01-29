@@ -4,11 +4,10 @@ import com.google.gson.Gson;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import model.Ingredients;
 import model.OrderCreater;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
@@ -52,31 +51,14 @@ public class OrderSteps {
                 .header("Content-Type", "application/json")
                 .when()
                 .get(GET_INGREDIENTS);
-        }
-    @Step("извлекаем список ингредиентов")
-    public List<String> extractIngredient(Response response, String type) {
-        List<String> ingredientIds = new ArrayList<>();
-            List<Map<String, Object>> ingredients = response.path("data");
-        for (Map<String, Object> ingredient : ingredients) {
-            String ingredientType = (String) ingredient.get("type");
-            if (type.equals(ingredientType)) {
-                String id = (String) ingredient.get("_id");
-                ingredientIds.add(id);
-            }
-        }
-
-        return ingredientIds;
     }
+
     @Step("Извлекаем ID булки и начинки для создания заказа")
     public List <String> extractBunAndMain(Response response) {
-        List<String> bunIds = extractIngredient(response, "bun");
-        List<String> mainIds = extractIngredient(response, "main");
-        // Выбираем первую булку и первую начинку
-        String bunId = bunIds.get(0);
-        String mainId = mainIds.get(0);
-
-        return List.of(bunId, mainId);
+        Ingredients ingredients = response.as(Ingredients.class);
+        return List.of(ingredients.getData().get(0).get_id(), ingredients.getData().get(1).get_id());
     }
+
     @Step("Печать тела запроса")
     public void printRequestBody(Object requestBody) {
         Gson gson = new Gson();
