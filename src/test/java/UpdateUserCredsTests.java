@@ -1,4 +1,4 @@
-import Steps.UserSteps;
+import steps.UserSteps;
 import com.github.javafaker.Faker;
 import generator.UserExample;
 import io.restassured.response.Response;

@@ -1,5 +1,5 @@
-import Steps.OrderSteps;
-import Steps.UserSteps;
+import steps.OrderSteps;
+import steps.UserSteps;
 import com.github.javafaker.Faker;
 import generator.UserExample;
 import io.restassured.response.Response;
@@ -38,7 +38,7 @@ public class CreateOrderTests {
         System.out.println(orderSteps.extractBunAndMain(response0));
         List <String> ingredients = orderSteps.extractBunAndMain(response0);
         OrderCreater orderCreater = new OrderCreater(ingredients);
-        Response response = orderSteps.CreateOrderWithoutAuth(orderCreater);
+        Response response = orderSteps.createOrderWithoutAuth(orderCreater);
         orderSteps.printRequestBody(orderCreater);
         orderSteps.printResponseBody(response);
         //проверяем ответ
@@ -94,7 +94,7 @@ public class CreateOrderTests {
     public void createOrderWithAuthoutWithoutIngredients() {
 
         OrderCreater orderCreater = new OrderCreater(new ArrayList<>());
-        Response response = orderSteps.CreateOrderWithoutAuth(orderCreater);
+        Response response = orderSteps.createOrderWithoutAuth(orderCreater);
         orderSteps.printRequestBody(orderCreater);
         orderSteps.printResponseBody(response);
         assertEquals(SC_BAD_REQUEST, response.statusCode(),
@@ -112,7 +112,7 @@ public class CreateOrderTests {
 
         Faker faker = new Faker();
         OrderCreater orderCreater = new OrderCreater(List.of(faker.crypto().md5(),faker.crypto().md5()));
-        Response response = orderSteps.CreateOrderWithoutAuth(orderCreater);
+        Response response = orderSteps.createOrderWithoutAuth(orderCreater);
         orderSteps.printRequestBody(orderCreater);
         orderSteps.printResponseBody(response);
         //проверяем ответ

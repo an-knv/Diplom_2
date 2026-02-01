@@ -1,4 +1,4 @@
-package Steps;
+package steps;
 
 import com.google.gson.Gson;
 import io.qameta.allure.Step;
@@ -21,7 +21,7 @@ public class OrderSteps {
 
 
     @Step("Создание заказа без авторизации")
-    public Response CreateOrderWithoutAuth(OrderCreater orderCreater) {
+    public Response createOrderWithoutAuth(OrderCreater orderCreater) {
 
         return  given()
                 .header("Content-Type", "application/json")

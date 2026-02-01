@@ -1,5 +1,6 @@
-import Steps.OrderSteps;
-import Steps.UserSteps;
+import org.assertj.core.api.SoftAssertions;
+import steps.OrderSteps;
+import steps.UserSteps;
 import generator.UserExample;
 import io.restassured.response.Response;
 import model.GetOrdersResponse;
@@ -68,14 +69,13 @@ public class GetOrdersByUserTests {
 
         // Извлекаем список заказов
         GetOrdersResponse foundOrder = getOrdersResponse.as(GetOrdersResponse.class);
-        assertFalse(foundOrder.getOrders().isEmpty());
-        assertEquals(createdOrderNumber, foundOrder.getOrders().get(0).getNumber(),
-                "Номер заказа должен совпадать");
-        assertEquals(createdOrderName, foundOrder.getOrders().get(0).getName(),
-                "Название заказа должно совпадать");
-
-        assertEquals("done", foundOrder.getOrders().get(0).getStatus(),
-                "Статус заказа должен быть 'done'");
+        SoftAssertions softly = new SoftAssertions();
+        softly.assertThat(foundOrder.getOrders()).isNotEmpty();
+        softly.assertThat(foundOrder.getOrders().get(0).getNumber()).isEqualTo(createdOrderNumber);
+        softly.assertThat(foundOrder.getOrders().get(0).getName()).isEqualTo(createdOrderName);
+        softly.assertThat(foundOrder.getOrders().get(0).getStatus()).isEqualTo("done");
+        softly.assertAll();
+        
     }
 
     @Test
